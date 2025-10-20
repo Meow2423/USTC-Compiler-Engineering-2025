@@ -59,6 +59,16 @@ Value* CminusfBuilder::visit(ASTNum &node) {
 
 Value* CminusfBuilder::visit(ASTVarDeclaration &node) {
     // TODO: This function is empty now.
+    Type *ret_type;
+    FLOAT_T = module->get_float_type();
+    INT32_T = module->get_int32_type();
+    if(node.type == TYPE_INT) {
+        ret_type = INT32_T;
+    } else {
+        ret_type = FLOAT_T;
+    }
+
+    Value *val;
     // Add some code here.
     return nullptr;
 }
