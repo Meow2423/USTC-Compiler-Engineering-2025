@@ -320,7 +320,33 @@ Value* CminusfBuilder::visit(ASTSimpleExpression &node) {
     if(node.additive_expression_r == nullptr){
         return node.additive_expression_l->accept(*this);
     }
-    return nullptr;
+    auto *l_val = node.additive_expression_l->accept(*this);
+    auto *r_val = node.additive_expression_r->accept(*this);
+    Value *ret_val = nullptr;
+    switch(node.op){
+        case OP_LE:
+            ret_val = builder->create_icmp_le(l_val, r_val);
+            break;
+        case OP_LT:
+            ret_val = builder->create_icmp_lt(l_val, r_val);
+
+            break;
+        case OP_GT:
+            ret_val = builder->create_icmp_gt(l_val, r_val);
+            break;
+        case OP_GE:
+            ret_val = builder->create_icmp_ge(l_val, r_val);
+            break;
+        case OP_EQ:
+            ret_val = builder->create_icmp_eq(l_val, r_val);
+            break;
+        case OP_NEQ:
+            ret_val = builder->create_icmp_ne(l_val, r_val);
+            break;
+    }
+
+    ret_val = builder->create_zext(ret_val, module->get_int32_type());
+    return ret_val;
 }
 
 Value* CminusfBuilder::visit(ASTAdditiveExpression &node) {
