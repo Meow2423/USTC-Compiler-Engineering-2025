@@ -1,4 +1,5 @@
 #include "cminusf_builder.hpp"
+#include <algorithm>
 
 #define CONST_FP(num) ConstantFP::get((float)num, module.get())
 #define CONST_INT(num) ConstantInt::get(num, module.get())
@@ -69,6 +70,8 @@ Value* CminusfBuilder::visit(ASTVarDeclaration &node) {
     }
 
     Value *val;
+    val = builder->create_alloca(ret_type);
+    scope.push(node.id, val);
     // Add some code here.
     return nullptr;
 }
@@ -314,6 +317,9 @@ Value* CminusfBuilder::visit(ASTAssignExpression &node) {
 Value* CminusfBuilder::visit(ASTSimpleExpression &node) {
     // TODO: This function is empty now.
     // Add some code here.
+    if(node.additive_expression_r == nullptr){
+        return node.additive_expression_l->accept(*this);
+    }
     return nullptr;
 }
 
