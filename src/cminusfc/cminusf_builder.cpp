@@ -323,25 +323,55 @@ Value* CminusfBuilder::visit(ASTSimpleExpression &node) {
     auto *l_val = node.additive_expression_l->accept(*this);
     auto *r_val = node.additive_expression_r->accept(*this);
     Value *ret_val = nullptr;
+    bool is_int = promote(&*builder, &l_val, &r_val);
     switch(node.op){
         case OP_LE:
-            ret_val = builder->create_icmp_le(l_val, r_val);
+            if(is_int){
+                ret_val = builder->create_icmp_le(l_val, r_val);                
+            }
+            else{
+                ret_val = builder->create_fcmp_le(l_val, r_val);
+            }
             break;
         case OP_LT:
-            ret_val = builder->create_icmp_lt(l_val, r_val);
-
+            if(is_int){
+                ret_val = builder->create_icmp_lt(l_val, r_val);                
+            }
+            else{
+                ret_val = builder->create_fcmp_lt(l_val, r_val);
+            }
             break;
         case OP_GT:
-            ret_val = builder->create_icmp_gt(l_val, r_val);
+            if(is_int){
+                ret_val = builder->create_icmp_gt(l_val, r_val);
+            }
+            else{
+                ret_val = builder->create_fcmp_gt(l_val, r_val);
+            }
             break;
         case OP_GE:
-            ret_val = builder->create_icmp_ge(l_val, r_val);
+            if(is_int){
+                ret_val = builder->create_icmp_ge(l_val, r_val);
+            }
+            else {
+                ret_val = builder->create_fcmp_ge(l_val, r_val);
+            }
             break;
         case OP_EQ:
-            ret_val = builder->create_icmp_eq(l_val, r_val);
+            if(is_int){
+                ret_val = builder->create_icmp_eq(l_val, r_val);
+            }
+            else {
+                ret_val = builder->create_fcmp_eq(l_val, r_val);
+            }
             break;
         case OP_NEQ:
-            ret_val = builder->create_icmp_ne(l_val, r_val);
+            if(is_int){
+                ret_val = builder->create_icmp_ne(l_val, r_val);
+            }
+            else {
+                ret_val = builder->create_fcmp_ne(l_val, r_val);
+            }
             break;
     }
 
