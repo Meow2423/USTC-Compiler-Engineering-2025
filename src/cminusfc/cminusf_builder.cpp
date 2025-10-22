@@ -63,15 +63,26 @@ Value* CminusfBuilder::visit(ASTVarDeclaration &node) {
     Type *ret_type;
     FLOAT_T = module->get_float_type();
     INT32_T = module->get_int32_type();
+    Constant *init;
     if(node.type == TYPE_INT) {
         ret_type = INT32_T;
+        init = ConstantInt::get(0,module.get());
     } else {
         ret_type = FLOAT_T;
+        init = ConstantFP::get(0,module.get());
     }
 
     Value *val;
-    val = builder->create_alloca(ret_type);
-    scope.push(node.id, val);
+    if(scope.in_global()) {
+        val = GlobalVariable::create(node.id, module.get(), ret_type, false, init);
+        
+        scope.push(node.id, val);
+    } else {
+        val = builder->create_alloca(ret_type);
+        scope.push(node.id, val);
+    }
+    // val = builder->create_alloca(ret_type);
+    // scope.push(node.id, val);
     // Add some code here.
     return nullptr;
 }
