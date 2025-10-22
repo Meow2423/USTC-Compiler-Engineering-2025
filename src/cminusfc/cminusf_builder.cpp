@@ -216,6 +216,10 @@ Value* CminusfBuilder::visit(ASTSelectionStmt &node) {
 Value* CminusfBuilder::visit(ASTIterationStmt &node) {
     // TODO: This function is empty now.
     // Add some code here.
+    BasicBlock* condition_block = BasicBlock::create(module.get(), "", context.func);
+    builder->set_insert_point(condition_block);
+    auto* cond_val = node.expression->accept(*this);
+    
     return nullptr;
 }
 
