@@ -218,7 +218,9 @@ Value* CminusfBuilder::visit(ASTIterationStmt &node) {
     // TODO: This function is empty now.
     // Add some code here.
     BasicBlock* condition_block = BasicBlock::create(module.get(), "", context.func);
+    builder->create_br(condition_block);
     builder->set_insert_point(condition_block);
+    // error: expected instruction opcode?
     auto* cond_val = node.expression->accept(*this);
     BasicBlock* true_block = BasicBlock::create(module.get(), "", context.func);
     BasicBlock* false_block = BasicBlock::create(module.get(), "", context.func);
