@@ -1,4 +1,5 @@
 #include "cminusf_builder.hpp"
+#include "BasicBlock.hpp"
 #include <algorithm>
 
 #define CONST_FP(num) ConstantFP::get((float)num, module.get())
@@ -219,7 +220,18 @@ Value* CminusfBuilder::visit(ASTIterationStmt &node) {
     BasicBlock* condition_block = BasicBlock::create(module.get(), "", context.func);
     builder->set_insert_point(condition_block);
     auto* cond_val = node.expression->accept(*this);
-    
+    BasicBlock* true_block = BasicBlock::create(module.get(), "", context.func);
+    BasicBlock* false_block = BasicBlock::create(module.get(), "", context.func);
+    if (cond_val->get_type()->is_integer_type()) {
+        cond_val = builder->create_icmp_ne(cond_val, CONST_INT(0));
+    } else {
+        cond_val = builder->create_fcmp_ne(cond_val, CONST_FP(0.));
+    }
+    builder->create_cond_br(cond_val, true_block, false_block);
+    builder->set_insert_point(true_block);
+    node.statement->accept(*this);
+    builder->create_br(condition_block);
+    builder->set_insert_point(false_block);
     return nullptr;
 }
 
